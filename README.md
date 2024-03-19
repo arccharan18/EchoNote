@@ -8,7 +8,7 @@
 
 <h2>🚀 Demo</h2>
 
-[https://maqsud-spotify.vercel.app/signup](https://maqsud-spotify.vercel.app/signup)
+[https://echo-note-woad.vercel.app/signup](https://echo-note-woad.vercel.app/signup)
 
 <h2>Project Screenshots:</h2>
 
@@ -45,13 +45,13 @@ Here're some of the project's best features:
 <p>1. Close the repository:</p>
 
 ```
-git clone https://github.com/maqsudtolipov/spotify-clone
+git clone https://github.com/arccharan18/EchoNote
 ```
 
 <p>2. Navigate to the project directory:</p>
 
 ```
-cd spotify-clone
+cd EchoNote
 ```
 
 <p>3. Install the dependencies:</p>
@@ -71,11 +71,11 @@ npm install
   JWT_SECRET=VERY SECRET WORD FOR HASHING
   
   // If you want to add email system
-  SMPT_SERVER=smtp-relay.brevo.com
-  SMPT_PORT=587
+  SMPT_SERVER=smtp.elasticemail.com
+  SMTP_PORT=2525
 
-  BREVO_USER=BREVO USERNAME
-  BREVO_PASS=BREVO PASS
+  SMTP_USER=SMTP USERNAME
+  SMTP_PASS=SMTP PASSWORD
   ```
 
 <p>5. Start the development server both in client and server folders: </p>
@@ -85,7 +85,7 @@ npm start
 ```
 
 <p>6. Open your browser and visit 
-`http://localhost:3000`</p>
+`http://localhost:5173`</p>
   
 
 <h2>🧑🏻‍💻 Contributing:</h2>
