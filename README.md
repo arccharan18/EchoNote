@@ -1,8 +1,8 @@
-<h1 align="center" id="title">Spotify</h1>
+<h1 align="center" id="title">EchoNote</h1>
 
 <p align="center"><img src="https://i.ibb.co/BCQWZhs/Screenshot-2023-10-01-at-8-20-18-pm.png" alt="project-image"></p>
 
-<p id="description">A full stack Spotify clone built using the MERN (MongoDB Express.js React.js Node.js) stack.</p>
+<p id="description">A full stack EchoNote(Spotify clone) built using the MERN (MongoDB Express.js React.js Node.js) stack.</p>
 
 <p align="center"><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&amp;logo=node.js&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&amp;logo=sass&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="shields"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&amp;logo=react&amp;logoColor=61DAFB" alt="shields"><img src="https://img.shields.io/badge/Redux-593D88?style=for-the-badge&amp;logo=redux&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&amp;logo=react-router&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&amp;logo=mongodb&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&amp;logo=vercel&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/WebStorm-000000?style=for-the-badge&amp;logo=WebStorm&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&amp;logo=eslint&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&amp;logo=prettier&amp;logoColor=F7BA3E" alt="shields"></p>
 
