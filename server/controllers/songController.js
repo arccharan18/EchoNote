@@ -1,18 +1,15 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const fs = require('fs');
+const { unlink } = require('fs');
 const Song = require('../models/songModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const fileLocation = require('../utils/fileLocation');
-const imagekit = require('../utils/ImageKit');
+const { upload: _upload } = require('../utils/ImageKit');
 
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.split('/')[0] === 'image') {
-    cb(null, true);
-  } else if (file.mimetype.split('/')[0] === 'audio') {
+  if (file.mimetype.split('/')[0] === 'image' || file.mimetype.split('/')[0] === 'audio') {
     cb(null, true);
   } else {
     cb(new Error('Only images and audios are allowed!'));
@@ -32,6 +29,7 @@ exports.uploadSongFiles = upload.fields([
   },
 ]);
 
+// eslint-disable-next-line consistent-return
 exports.resizeSongImg = catchAsync(async (req, res, next) => {
   if (!req.files.img) return next();
 
@@ -45,6 +43,7 @@ exports.resizeSongImg = catchAsync(async (req, res, next) => {
   next();
 });
 
+// eslint-disable-next-line consistent-return
 exports.renameSongFile = catchAsync(async (req, res, next) => {
   if (!req.files.song) return next();
 
@@ -56,12 +55,10 @@ exports.renameSongFile = catchAsync(async (req, res, next) => {
 exports.getAllSongs = catchAsync(async (req, res) => {
   let query = Song.find(req.query.personal && { artist: req.user.id });
 
-  // Sort
   if (req.query.sort) {
     query = query.sort(req.query.sort);
   }
 
-  // Limit
   if (req.query.limit) {
     query = query.limit(req.query.limit);
   }
@@ -77,7 +74,7 @@ exports.getAllSongs = catchAsync(async (req, res) => {
   });
 });
 
-exports.getSong = catchAsync(async (req, res, next) => {
+exports.getSong = catchAsync(async (req, res) => {
   await Song.findByIdAndUpdate(req.params.id, {
     $inc: { plays: 1 },
   });
@@ -87,33 +84,30 @@ exports.getSong = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.createSong = catchAsync(async (req, res, next) => {
-  if (
-    !req.files.song[0].filename ||
-    !req.files.img[0].filename ||
-    !req.body.name
-  ) {
+  if (!req.files.song[0].filename || !req.files.img[0].filename || !req.body.name) {
     return next(new AppError('👎 Something is missing', 400));
   }
 
-  const imgKit = await imagekit.upload({
+  const imgKit = await _upload({
     file: req.files.img[0].buffer,
     fileName: req.files.img[0].filename,
-    folder: 'spotify/songs',
+    folder: 'EchoNote/songs',
   });
 
-  const songKit = await imagekit.upload({
+  const songKit = await _upload({
     file: req.files.song[0].buffer,
     fileName: req.files.song[0].filename,
-    folder: 'spotify/songs',
+    folder: 'EchoNote/songs',
   });
 
-  const songData = {};
-
-  songData.name = req.body.name;
-  songData.artist = req.user.id;
-  songData.img = imgKit.url;
-  songData.song = songKit.url;
+  const songData = {
+    name: req.body.name,
+    artist: req.user.id,
+    img: imgKit.url,
+    song: songKit.url,
+  };
 
   const song = await Song.create(songData);
 
@@ -125,17 +119,17 @@ exports.createSong = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.updateSong = catchAsync(async (req, res, next) => {
-  if (req.body.song)
-    return next(new AppError('You can not update a song file', 400));
+  if (req.body.song) return next(new AppError('You can not update a song file', 400));
 
   const data = {};
 
   if (req.file) {
-    const imgKit = await imagekit.upload({
+    const imgKit = await _upload({
       file: req.file.buffer,
       fileName: req.file.filename,
-      folder: 'spotify/songs',
+      folder: 'EchoNote/songs',
     });
     data.img = imgKit.url;
   }
@@ -157,13 +151,16 @@ exports.updateSong = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.deleteSong = catchAsync(async (req, res, next) => {
   const song = await Song.findByIdAndDelete(req.params.id);
 
   if (!song) return next(new AppError('No song found with given id', 404));
 
-  fs.unlink(`public/songs/${song.song}`, (err) => console.log(err));
-  fs.unlink(`public/songs/${song.img}`, (err) => console.log(err));
+  // eslint-disable-next-line no-console
+  unlink(`public/songs/${song.song}`, (err) => console.log(err));
+  // eslint-disable-next-line no-console
+  unlink(`public/songs/${song.img}`, (err) => console.log(err));
 
   res.status(204).json({
     status: 'success',

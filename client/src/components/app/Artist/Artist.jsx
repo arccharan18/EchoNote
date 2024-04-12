@@ -70,6 +70,12 @@ const Artist = () => {
             </div>
             <div>
               <h2 className="h2">Liked Songs</h2>
+              {/* Conditional rendering for liked songs */}
+              {artist.likedSongs ? (
+                <List list={artist.likedSongs} />
+              ) : (
+                <Loading /> // Render loading indicator if liked songs data is not available
+              )}
             </div>
           </div>
         </div>

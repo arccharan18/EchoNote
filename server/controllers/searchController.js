@@ -1,5 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
-const Song = require('../models/songModel');
+const Song = require('../models/songModel').default;
 const Playlist = require('../models/playlistModel');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');

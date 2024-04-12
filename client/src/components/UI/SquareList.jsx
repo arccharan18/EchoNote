@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { replaceQueue } from "../../store/reducers/queue.js";
 import { useDispatch } from "react-redux";
 import { RiPlayCircleFill } from "react-icons/ri";
+import PropTypes from 'prop-types'; // Import PropTypes
 
-const squareList = ({ list, type = "song" }) => {
+const SquareList = ({ list, type = "song" }) => {
   const dispatch = useDispatch();
 
   const handlePlaySong = (e, song) => {
@@ -14,10 +15,10 @@ const squareList = ({ list, type = "song" }) => {
     dispatch(replaceQueue({ songs: [song], i: 0, id: song.id }));
   }
 
-  // TODO: change 'square-card' to 'card' and create a new component if necessary
   return (
     <div className="square-list">
-      {list.map((el) => (
+      {/* Check if list is an array before mapping */}
+      {Array.isArray(list) && list.map((el) => (
         <Link
           key={el.id}
           to={
@@ -30,11 +31,18 @@ const squareList = ({ list, type = "song" }) => {
           <div className="square-card__name">{el.name}</div>
           <span>{type}</span>
 
-          {type === "song" && <RiPlayCircleFill className="square-card__btn"/>}
+          {/* Ensure el object has necessary properties for conditional rendering */}
+          {type === "song" && el.id && el.name && el.img && <RiPlayCircleFill className="square-card__btn"/>}
         </Link>
       ))}
     </div>
   );
 };
 
-export default squareList;
+// Define PropTypes
+SquareList.propTypes = {
+  list: PropTypes.array.isRequired,
+  type: PropTypes.oneOf(['song', 'artist', 'playlist']), // Validate type prop
+};
+
+export default SquareList;

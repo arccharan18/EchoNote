@@ -56,14 +56,14 @@ export const isLoggedIn = createAsyncThunk(
   },
 );
 
-export const updateUser = createAsyncThunk("user/updateUser", async (data) => {
+export const updateUser = createAsyncThunk("user/updateUser", async (data, { rejectWithValue }) => {
   try {
     const res = await axios.patch("/users/updateMe", data);
 
     toast.success("Your data updated ");
     return res.data.data;
   } catch (err) {
-    throw err;
+    return rejectWithValue(err);
   }
 });
 
@@ -82,7 +82,7 @@ export const forgotPassword = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "user/resetPassword",
-  async (data, { rejectWithValue }) => {
+  async (data) => {
     try {
       const res = await axios.patch(`/users/resetPassword/${data.id}`, data);
 
@@ -90,7 +90,7 @@ export const resetPassword = createAsyncThunk(
 
       return res.data;
     } catch (err) {
-      return rejectWithValue(err);
+      throw err;
     }
   },
 );
@@ -114,6 +114,7 @@ export const logoutUser = createAsyncThunk("user/logoutUser", async () => {
     await toast.success(res.data.message);
   } catch (err) {
     console.log(err);
+    throw err; // Rethrow the error to maintain consistency with other actions
   }
 });
 

@@ -1,5 +1,8 @@
+// user.js
+
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  // Import thunks and actions
   dislikeSong,
   followArtist,
   isLoggedIn,
@@ -21,13 +24,20 @@ import { toast } from "react-toastify";
 export const userSlice = createSlice({
   name: "user",
   initialState: {
-    data: {},
+    data: {
+      name: "",
+      img: "",
+      likedSongs: [],
+      followedArtists: [],
+      playlists: [],
+      likedPlaylists: [],
+    },
     auth: false,
     loading: false,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder // Login user
+    builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
       })
@@ -42,6 +52,7 @@ export const userSlice = createSlice({
 
         toast.error(action.payload.response.data.message);
       })
+
 
       // Sign up
       .addCase(signupUser.pending, (state) => {

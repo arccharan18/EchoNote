@@ -1,5 +1,4 @@
-import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { isLoggedIn } from "./store/thunks/user";
@@ -34,8 +33,6 @@ function AppRoutes() {
       {user.auth === true && (
         <main className="main">
           <Nav />
-
-          {/* Components below should be re-viewed */}
           <App>
             <Routes>
               <Route path="/" element={<Home />} />

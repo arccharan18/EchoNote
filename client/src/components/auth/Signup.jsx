@@ -13,14 +13,27 @@ const Signup = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
+
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { name, email, password, passwordConfirm } = formData;
 
     // Basic client-side validation
     if (password !== passwordConfirm) {
@@ -33,7 +46,8 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await dispatch(signupUser({ name, email, password }));
+      // Dispatch signupUser action with form data
+      await dispatch(signupUser({ name, email, password, passwordConfirm }));
       toast.success("Signup successful!");
     } catch (error) {
       // Handle signup error
@@ -48,41 +62,42 @@ const Signup = () => {
     <>
       {!user.auth ? (
         <div className="auth">
-          <form className="auth__form" onSubmit={handleSignup}>
-            <img className="auth__form-logo" src={logo} alt="Spotify logo"/>
+          <form className="auth__form" onSubmit={handleSubmit}>
+            <img className="auth__form-logo" src={logo} alt="Spotify logo" />
             <Link to="/login" className="auth__form-link">
               Log In here
             </Link>
             <Input
               name="name"
+              type="text"
               placeholder="Name"
-              required={true}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              required
+              value={formData.name}
+              onChange={handleChange}
             />
             <Input
-              type="email"
               name="email"
+              type="email"
               placeholder="Email"
-              required={true}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              required
+              value={formData.email}
+              onChange={handleChange}
             />
             <Input
-              type="password"
               name="password"
+              type="password"
               placeholder="Password"
-              required={true}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              required
+              value={formData.password}
+              onChange={handleChange}
             />
             <Input
-              type="password"
               name="passwordConfirm"
+              type="password"
               placeholder="Confirm Password"
-              required={true}
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
+              required
+              value={formData.passwordConfirm}
+              onChange={handleChange}
             />
             <Button type="submit" isLoading={loading}>
               {loading ? "Loading" : "Sign Up"}
@@ -95,7 +110,7 @@ const Signup = () => {
           </p>
         </div>
       ) : (
-        <Navigate to={"/"}/>
+        <Navigate to={"/"} />
       )}
     </>
   );

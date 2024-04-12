@@ -8,13 +8,13 @@ class Email {
     this.name = user.name;
   }
 
-  newTransport() {
+  static newTransport() {
     return nodemailer.createTransport({
-      host: process.env.SMTP_SERVER, 
-      port: process.env.SMTP_PORT, 
+      host: process.env.SMTP_SERVER,
+      port: process.env.SMTP_PORT,
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS, 
+        pass: process.env.SMTP_PASS,
       },
     });
   }
@@ -27,7 +27,7 @@ class Email {
       html,
     };
 
-    await this.newTransport().sendMail(mailOptions);
+    await Email.newTransport().sendMail(mailOptions);
   }
 
   async sendWelcome() {

@@ -4,8 +4,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Playlist = require('../models/playlistModel');
 const User = require('../models/userModel');
-const fs = require('fs');
-const fileLocation = require('../utils/fileLocation');
 const imagekit = require('../utils/ImageKit');
 
 const storage = multer.memoryStorage();
@@ -18,11 +16,13 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 exports.resizePlaylistImg = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   req.file.filename = `playlist-${req.params.id}-${Date.now()}.jpeg`;
 
+  // eslint-disable-next-line no-console
   console.log('buffer', req.file);
   req.file.buffer = await sharp(req.file.buffer)
     .resize(512, 512)
@@ -35,7 +35,7 @@ const upload = multer({ storage, fileFilter });
 
 exports.uploadPlaylistImg = upload.single('img');
 
-exports.getAllPlaylists = catchAsync(async (req, res, next) => {
+exports.getAllPlaylists = catchAsync(async (req, res) => {
   const filter = {};
   if (req.user.id) filter.user = req.user.id.userId;
 
@@ -50,13 +50,13 @@ exports.getAllPlaylists = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.getPlaylist = catchAsync(async (req, res, next) => {
   const playlist = await Playlist.findById(req.params.id)
     .populate('songs')
     .populate('user', 'name img');
 
-  if (!playlist)
-    return next(new AppError('❓ No playlist found with that id', 404));
+  if (!playlist) return next(new AppError('❓ No playlist found with that id', 404));
 
   res.status(200).json({
     status: 'success',
@@ -66,7 +66,7 @@ exports.getPlaylist = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createPlaylist = catchAsync(async (req, res, next) => {
+exports.createPlaylist = catchAsync(async (req, res) => {
   const playlist = await Playlist.create({ user: req.user.id });
   const user = await User.findByIdAndUpdate(
     req.user.id,
@@ -83,6 +83,7 @@ exports.createPlaylist = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.updatePlaylist = catchAsync(async (req, res, next) => {
   const data = {};
 
@@ -103,8 +104,7 @@ exports.updatePlaylist = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  if (!playlist)
-    return next(new AppError('❓ No playlist found with that id', 404));
+  if (!playlist) return next(new AppError('❓ No playlist found with that id', 404));
 
   res.status(200).json({
     status: 'success',
@@ -114,10 +114,10 @@ exports.updatePlaylist = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.deletePlaylist = catchAsync(async (req, res, next) => {
   const playlist = await Playlist.findByIdAndDelete(req.params.id);
-  if (!playlist)
-    return next(new AppError('❓ No playlist found with that id', 404));
+  if (!playlist) return next(new AppError('❓ No playlist found with that id', 404));
 
   const user = await User.findByIdAndUpdate(
     req.user.id,
@@ -131,7 +131,7 @@ exports.deletePlaylist = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.addSong = catchAsync(async (req, res, next) => {
+exports.addSong = catchAsync(async (req, res) => {
   const playlist = await Playlist.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { songs: req.params.song } },
@@ -144,7 +144,7 @@ exports.addSong = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.removeSong = catchAsync(async (req, res, next) => {
+exports.removeSong = catchAsync(async (req, res) => {
   const playlist = await Playlist.findByIdAndUpdate(
     req.params.id,
     { $pull: { songs: req.params.song } },
@@ -159,7 +159,7 @@ exports.removeSong = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.likePlaylist = catchAsync(async (req, res, next) => {
+exports.likePlaylist = catchAsync(async (req, res) => {
   const { playlist } = req.body;
 
   const user = await User.findByIdAndUpdate(
@@ -174,7 +174,7 @@ exports.likePlaylist = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.dislikePlaylist = catchAsync(async (req, res, next) => {
+exports.dislikePlaylist = catchAsync(async (req, res) => {
   const { playlist } = req.body;
 
   const user = await User.findByIdAndUpdate(

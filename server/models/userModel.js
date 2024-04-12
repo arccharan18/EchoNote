@@ -113,6 +113,7 @@ userSchema.pre('save', async function (next) {
   return next();
 });
 
+// eslint-disable-next-line func-names, consistent-return
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
@@ -120,11 +121,12 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+// eslint-disable-next-line func-names
 userSchema.methods.checkPassword = async function (pass, realPass) {
-  return await bcrypt.compare(pass, realPass);
+  return bcrypt.compare(pass, realPass);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTIssuedTime, where) {
+userSchema.methods.changedPasswordAfter = function (JWTIssuedTime) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -137,6 +139,7 @@ userSchema.methods.changedPasswordAfter = function (JWTIssuedTime, where) {
   return false;
 };
 
+// eslint-disable-next-line func-names
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(12).toString('hex');
 
@@ -150,6 +153,7 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+// eslint-disable-next-line new-cap
 const User = new mongoose.model('User', userSchema);
 
 module.exports = User;

@@ -11,55 +11,65 @@ const songRouter = require('./routes/songRoutes');
 const userRouter = require('./routes/userRoutes');
 const playlistRouter = require('./routes/playlistRoutes');
 const searchRouter = require('./routes/searchRoutes');
+const fbSongsRouter = require('./routes/firebaseroute'); // Import Firebase songs router
+const spotifyAuthRouter = require('./spotifyAuth'); // Import Spotify authentication router
 
 const app = express();
 
-// Enable CORS
+// Middleware setup
+app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+
+// CORS setup
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:5173'
-        : 'https://maqsud-spotify.vercel.app',
+    origin: ['http://localhost:5173', 'https://echo-note-woad.vercel.app'],
     credentials: true,
   })
 );
 
-// Set security HTTP headers
-app.use(helmet({ crossOriginResourcePolicy: false }));
-
-// Body parser, reading data from body into req.body
-app.use(express.json({ limit: '10kb' }));
-
-// Parse cookies
-app.use(cookieParser());
-
-// Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
-
-// Data sanitization against XSS
-app.use(xss());
-
 // Serve static files
 app.use('/public', express.static('public'));
 
-// Route handlers
+// Route to handle Spotify authentication callback
+// eslint-disable-next-line consistent-return
+app.get('/', (req, res, next) => {
+  const { code } = req.query;
+  if (code) {
+    // If code parameter is present, redirect to Spotify authentication callback route
+    return res.redirect(`/auth/callback?code=${code}`);
+  }
+  // Otherwise, continue to serve the welcome message
+  res.status(200).send('Welcome to EchoNote');
+});
+
+// Route to handle successful authentication callback
+app.get('/success', (req, res) => {
+  // eslint-disable-next-line camelcase
+  const { access_token } = req.query;
+  // eslint-disable-next-line camelcase
+  res.status(200).send(`Authentication successful! Access token: ${access_token}`);
+});
+
+// Mount Spotify authentication router
+app.use('/auth', spotifyAuthRouter);
+
+// Routes setup
 app.use('/api/v1/songs', songRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/playlists', playlistRouter);
 app.use('/api/v1/search', searchRouter);
 
-// Root route handler
-app.get('/', (req, res) => {
-  res.status(200).send('Welcome to EchoNote');
-});
+// Mount Firebase songs router
+app.use('/api/v1/firebase-songs', fbSongsRouter);
 
-// Handle undefined routes
+// Error handling
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
-
-// Global error handler
 app.use(globalErrorHandler);
 
 module.exports = app;

@@ -1,8 +1,8 @@
 const multer = require('multer');
+const sharp = require('sharp');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
-const sharp = require('sharp');
 const imagekit = require('../utils/ImageKit');
 
 const storage = multer.memoryStorage();
@@ -19,6 +19,7 @@ const upload = multer({ storage, fileFilter });
 
 exports.uploadPhoto = upload.single('photo');
 
+// eslint-disable-next-line consistent-return
 exports.resizeUserImg = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -32,6 +33,7 @@ exports.resizeUserImg = catchAsync(async (req, res, next) => {
   next();
 });
 
+// eslint-disable-next-line consistent-return
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -69,8 +71,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-
-exports.becomeArtist = catchAsync(async (req, res, next) => {
+exports.becomeArtist = catchAsync(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.user.id,
     { role: 'artist' },
@@ -85,6 +86,7 @@ exports.becomeArtist = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.getArtist = catchAsync(async (req, res, next) => {
   const artist = await User.findById(req.params.id).populate('songs');
 
@@ -98,6 +100,7 @@ exports.getArtist = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.followArtist = catchAsync(async (req, res, next) => {
   const artist = await User.findById(req.params.id);
 
@@ -117,6 +120,7 @@ exports.followArtist = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line consistent-return
 exports.unfollowArtist = catchAsync(async (req, res, next) => {
   const artist = await User.findById(req.params.id);
 
@@ -136,7 +140,7 @@ exports.unfollowArtist = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.likeSong = catchAsync(async (req, res, next) => {
+exports.likeSong = catchAsync(async (req, res) => {
   const { song } = req.body;
 
   const user = await User.findByIdAndUpdate(
@@ -151,7 +155,7 @@ exports.likeSong = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.dislikeSong = catchAsync(async (req, res, next) => {
+exports.dislikeSong = catchAsync(async (req, res) => {
   const { song } = req.body;
 
   const user = await User.findByIdAndUpdate(

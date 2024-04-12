@@ -43,6 +43,7 @@ const playlistSchema = new mongoose.Schema(
   }
 );
 
+// eslint-disable-next-line new-cap
 const Playlist = new mongoose.model('Playlist', playlistSchema);
 
 module.exports = Playlist;

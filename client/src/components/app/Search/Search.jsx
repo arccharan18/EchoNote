@@ -19,12 +19,18 @@ const Search = () => {
 
     const fetcher = async () => {
       try {
-        const res = await axios.get(`/search/${queryType}?name=${query}`, {
-          signal: controller.signal,
-        });
+        // Check if the query is empty before making the request
+        if (query.trim() !== "") {
+          const res = await axios.get(`/search/${queryType}?name=${query}`, {
+            signal: controller.signal,
+          });
 
-        setResults({ type: queryType, list: res.data.data });
-        setError(false);
+          setResults({ type: queryType, list: res.data.data });
+          setError(false);
+        } else {
+          setResults({ type: queryType, list: [] });
+          setError(false); // Reset error state when query is empty
+        }
       } catch (e) {
         setResults({ type: queryType, list: [] });
         setError(true);

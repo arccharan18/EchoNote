@@ -4,7 +4,7 @@ import { dislikeSong, likeSong } from "../../store/thunks/user";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playPause } from "../../store/reducers/player";
 import { nextSong, prevSong } from "../../store/reducers/queue";
-import axios from "../../api/axios";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import {
   RiHeart2Fill,
@@ -35,71 +35,87 @@ const Player = () => {
 
   const audioRef = useRef();
   const progressRef = useRef();
-  const playAnimationRef = useRef();
   const volumeRef = useRef();
 
   const repeat = useCallback(() => {
     const time = audioRef.current.currentTime;
     setCurrentTime(time);
-
     progressRef.current.value = time;
-    progressRef.current.style.setProperty(
-      "--range-progress",
-      `${(progressRef.current.value / duration) * 100}%`,
-    );
-
-    playAnimationRef.current = requestAnimationFrame(repeat);
-  }, [audioRef, duration, progressRef, setCurrentTime]);
+  }, []);
 
   useEffect(() => {
-    // Prevent useEffect triggered before audio is loaded
     if (audioRef.current === undefined) return;
 
     if (isPlaying) {
-      audioRef.current.play();
+      audioRef.current.play().catch((error) => console.error("Playback error: ", error));
     } else {
       audioRef.current.pause();
     }
 
-    playAnimationRef.current = requestAnimationFrame(repeat);
-  }, [isPlaying, audioRef, repeat]);
+    const animationFrame = requestAnimationFrame(repeat);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [isPlaying, repeat]);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume / 100;
     }
-  }, [volume, audioRef]);
+  }, [volume]);
 
-  // Increases plays count of the song
   useEffect(() => {
     const increaseCount = async () => {
-      if (song) await axios.get(`/songs/${song.id}`);
+      try {
+        if (song && song.id) {
+          const accessToken = 'BQBYm3rbHNdPZlToUgGLTA-ruhgML4L5GeuMNj2w4NTYHl7proaD86NKGzLcNGjRKyuoamF4_t2gABI9IeyJv8r5yjrV4xamKCDavcXEFhSZHb2Yj9RnJG5mUjgKDDCy35Ig5m8t2WjnecuM-D8CnuDDQASgP8FPBSMqhej5ZJicIEVNpc0FfqqRNyt7K-O_lMylYvv6hcPmuQiWB5ht7JMo1vEZoikCDyEZM4-EDL4AZqGJjm24qZlgqnXDrHxkCQpdkNrLsXAnYsPW9-wijxrA';
+          const spotifyResponse = await axios.get(`https://api.spotify.com/v1/tracks/${song.id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          console.log(spotifyResponse.data);
+        }
+      } catch (error) {
+        console.error("Error while increasing plays count: ", error);
+      }
     };
     increaseCount();
   }, [song]);
 
-  const likeSongHandler = () => dispatch(likeSong(song.id));
+  const likeSongHandler = () => {
+    if (song && song.id) {
+      dispatch(likeSong(song.id));
+    }
+  };
 
-  const dislikeSongHandler = () => dispatch(dislikeSong(song.id));
+  const dislikeSongHandler = () => {
+    if (song && song.id) {
+      dispatch(dislikeSong(song.id));
+    }
+  };
 
-  // Music player
   const togglePlayPauseHandler = () => {
     dispatch(playPause());
   };
 
   const progressChangeHandler = () => {
-    audioRef.current.currentTime = progressRef.current.value;
+    if (audioRef.current) {
+      audioRef.current.currentTime = progressRef.current.value;
+    }
   };
 
   const volumeChangeHandler = (e) => {
     setVolume(e.target.value);
-    e.target.style.setProperty("--range-progress", `${e.target.value}%`);
   };
 
   const onLoadedMetadataHandler = () => {
-    const seconds = audioRef.current.duration;
-    setDuration(seconds);
-    progressRef.current.max = seconds;
+    if (audioRef.current) {
+      const seconds = audioRef.current.duration;
+      setDuration(seconds);
+      progressRef.current.max = seconds;
+    }
   };
 
   const handleNext = () => {
@@ -110,28 +126,17 @@ const Player = () => {
     dispatch(prevSong());
   };
 
-  // Navigator control
-  navigator.mediaSession.setActionHandler("previoustrack", () => {
-    dispatch(prevSong());
-  });
-
-  navigator.mediaSession.setActionHandler("nexttrack", () => {
-    dispatch(nextSong());
-  });
-
-  navigator.mediaSession.setActionHandler("play", () => {
-    dispatch(playPause());
-  });
-
-  navigator.mediaSession.setActionHandler("pause", () => {
-    dispatch(playPause());
-  });
+  const repeatSongHandler = () => {
+    setRepeatSong((state) => !state);
+    if (audioRef.current) {
+      audioRef.current.loop = !repeatSong;
+    }
+  };
 
   const onEndedHandler = () => {
     handleNext();
   };
 
-  // Helper functions
   const formatTime = (time) => {
     if (time && !isNaN(time)) {
       const minutes = Math.floor(time / 60);
@@ -144,13 +149,7 @@ const Player = () => {
   };
 
   const userLikedSong = () => {
-    let likedSong = likedSongs.find((likedSong) => likedSong.id === song.id);
-    return !!likedSong;
-  };
-
-  const repeatSongHandler = () => {
-    setRepeatSong((state) => !state);
-    audioRef.current.loop = !repeatSong;
+    return song && song.id && likedSongs.some((likedSong) => likedSong.id === song.id);
   };
 
   return (
@@ -162,10 +161,10 @@ const Player = () => {
             <div className="player__song-context">
               <span className="player__song-name">{song.name}</span>
               <Link
-                to={`/artist/${song.artist.id}`}
+                to={song.artist ? `/artist/${song.artist.id}` : "#"}
                 className="player__song-artist"
               >
-                {song.artist.name}
+                {song.artist ? song.artist.name : "Unknown Artist"}
               </Link>
             </div>
             {userLikedSong() === true ? (
@@ -186,7 +185,6 @@ const Player = () => {
               src={song.song}
               onLoadedMetadata={onLoadedMetadataHandler}
               onEnded={onEndedHandler}
-              autoPlay={true}
             />
 
             <div className="player__icons">
@@ -203,14 +201,10 @@ const Player = () => {
                 )}
               </button>
               <RiSkipForwardMiniFill onClick={handleNext} />
-              {repeatSong ? (
-                <RiRepeatOneLine
-                  className={"player__repeat"}
-                  onClick={repeatSongHandler}
-                />
-              ) : (
-                <RiRepeatOneLine onClick={repeatSongHandler} />
-              )}
+              <RiRepeatOneLine
+                className={repeatSong ? "player__repeat active" : "player__repeat"}
+                onClick={repeatSongHandler}
+              />
             </div>
             <div className="player__range">
               <span className="player__range-time">
@@ -219,7 +213,8 @@ const Player = () => {
               <input
                 ref={progressRef}
                 type="range"
-                defaultValue={0}
+                value={currentTime}
+                max={duration}
                 onChange={progressChangeHandler}
               />
               <span className="player__range-time">{formatTime(duration)}</span>
@@ -239,8 +234,7 @@ const Player = () => {
               min={0}
               max={100}
               value={volume}
-              defaultValue={100}
-              onChange={(e) => volumeChangeHandler(e)}
+              onChange={volumeChangeHandler}
             />
           </div>
         </>

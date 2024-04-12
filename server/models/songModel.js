@@ -1,18 +1,17 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const songSchema = new mongoose.Schema(
+const songSchema = new Schema(
   {
     name: {
       type: String,
       required: [true, 'A song must have a name'],
       trim: true,
       unique: true,
-      minLength: [3, 'Song name must be more that 3 characters'],
-      maxLength: [30, 'Song name must be at most 30 characters'],
+      minlength: [3, 'Song name must be more than 3 characters'],
+      maxlength: [30, 'Song name must be at most 30 characters'],
     },
     artist: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      type: String, // Change type to String
       required: [true, 'A song must belong to an artist'],
     },
     song: {
@@ -29,7 +28,7 @@ const songSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
   },
   {
@@ -38,6 +37,6 @@ const songSchema = new mongoose.Schema(
   }
 );
 
-const Song = new mongoose.model('Song', songSchema);
+const Song = model('Song', songSchema);
 
 module.exports = Song;
