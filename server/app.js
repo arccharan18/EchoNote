@@ -26,7 +26,14 @@ app.use(xss());
 // CORS setup
 app.use(
   cors({
+<<<<<<< HEAD
     origin: ['http://localhost:5173', 'https://echo-note-woad.vercel.app'],
+=======
+    origin:
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:5173'
+        : 'https://echo-note-woad.vercel.app',
+>>>>>>> 0010eae1af5f8a2d0c042fb45a2fd8009ee0d766
     credentials: true,
   })
 );

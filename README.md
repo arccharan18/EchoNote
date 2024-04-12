@@ -1,14 +1,14 @@
-<h1 align="center" id="title">Spotify</h1>
+<h1 align="center" id="title">EchoNote</h1>
 
 <p align="center"><img src="https://i.ibb.co/BCQWZhs/Screenshot-2023-10-01-at-8-20-18-pm.png" alt="project-image"></p>
 
-<p id="description">A full stack Spotify clone built using the MERN (MongoDB Express.js React.js Node.js) stack.</p>
+<p id="description">A full stack EchoNote(Spotify clone) built using the MERN (MongoDB Express.js React.js Node.js) stack.</p>
 
 <p align="center"><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&amp;logo=node.js&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&amp;logo=sass&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="shields"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&amp;logo=react&amp;logoColor=61DAFB" alt="shields"><img src="https://img.shields.io/badge/Redux-593D88?style=for-the-badge&amp;logo=redux&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&amp;logo=react-router&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&amp;logo=mongodb&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&amp;logo=vercel&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/WebStorm-000000?style=for-the-badge&amp;logo=WebStorm&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&amp;logo=eslint&amp;logoColor=white" alt="shields"><img src="https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&amp;logo=prettier&amp;logoColor=F7BA3E" alt="shields"></p>
 
 <h2>🚀 Demo</h2>
 
-[https://maqsud-spotify.vercel.app/signup](https://maqsud-spotify.vercel.app/signup)
+[https://echo-note-woad.vercel.app/signup](https://echo-note-woad.vercel.app/signup)
 
 <h2>Project Screenshots:</h2>
 
@@ -45,13 +45,13 @@ Here're some of the project's best features:
 <p>1. Close the repository:</p>
 
 ```
-git clone https://github.com/maqsudtolipov/spotify-clone
+git clone https://github.com/arccharan18/EchoNote
 ```
 
 <p>2. Navigate to the project directory:</p>
 
 ```
-cd spotify-clone
+cd EchoNote
 ```
 
 <p>3. Install the dependencies:</p>
@@ -71,11 +71,11 @@ npm install
   JWT_SECRET=VERY SECRET WORD FOR HASHING
   
   // If you want to add email system
-  SMPT_SERVER=smtp-relay.brevo.com
-  SMPT_PORT=587
+  SMPT_SERVER=smtp.elasticemail.com
+  SMTP_PORT=2525
 
-  BREVO_USER=BREVO USERNAME
-  BREVO_PASS=BREVO PASS
+  SMTP_USER=SMTP USERNAME
+  SMTP_PASS=SMTP PASSWORD
   ```
 
 <p>5. Start the development server both in client and server folders: </p>
@@ -85,7 +85,7 @@ npm start
 ```
 
 <p>6. Open your browser and visit 
-`http://localhost:3000`</p>
+`http://localhost:5173`</p>
   
 
 <h2>🧑🏻‍💻 Contributing:</h2>
